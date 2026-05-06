@@ -1,0 +1,659 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fishing Logbook</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Logbook summary">
+        <div class="brand-block">
+          <div class="brand-mark">FL</div>
+          <h1>Fishing Logbook</h1>
+          <p>Private one-person trip journal</p>
+        </div>
+
+        <section class="side-section">
+          <div class="section-heading">
+            <h2>Logbook Stats</h2>
+          </div>
+          <dl class="stats-list">
+            <div><dt>Trips</dt><dd id="statTrips">0</dd></div>
+            <div><dt>Fish Caught</dt><dd id="statFish">0</dd></div>
+            <div><dt>Hours Fished</dt><dd id="statHours">0</dd></div>
+            <div><dt>Waterbodies</dt><dd id="statWaterbodies">0</dd></div>
+            <div><dt>Catch Rate</dt><dd id="statCatchRate">0</dd></div>
+          </dl>
+        </section>
+
+        <section class="side-section">
+          <div class="section-heading">
+            <h2>Most Caught</h2>
+          </div>
+          <div id="speciesBars" class="bar-list"></div>
+        </section>
+
+        <section class="side-section">
+          <div class="section-heading">
+            <h2>Top Lures</h2>
+          </div>
+          <div id="lureBars" class="bar-list"></div>
+        </section>
+      </aside>
+
+      <main class="main-panel">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Self-hosted logbook</p>
+            <h2>Trips</h2>
+          </div>
+          <div class="topbar-actions">
+            <button class="button secondary" id="tripsViewButton" type="button">Trips</button>
+            <button class="button secondary" id="statsViewButton" type="button">Advanced Stats</button>
+            <button class="button secondary" id="gearViewButton" type="button">Gear</button>
+            <details class="data-menu">
+              <summary class="button secondary">Data</summary>
+              <div class="data-menu-panel">
+                <button class="button secondary" id="exportButton" type="button">Export JSON</button>
+                <label class="button secondary file-button">
+                  Import JSON
+                  <input id="importInput" type="file" accept="application/json" />
+                </label>
+              </div>
+            </details>
+            <button class="button primary" id="newTripButton" type="button">New Trip</button>
+          </div>
+        </header>
+
+        <section class="controls" id="tripControls" aria-label="Trip filters">
+          <label class="search-box">
+            <span>Search</span>
+            <input id="searchInput" type="search" placeholder="Location, species, lure, notes" />
+          </label>
+          <label>
+            <span>Target</span>
+            <select id="targetFilter"></select>
+          </label>
+          <label>
+            <span>Year</span>
+            <select id="yearFilter"></select>
+          </label>
+          <label>
+            <span>Sort</span>
+            <select id="sortSelect">
+              <option value="date-desc">Newest first</option>
+              <option value="date-asc">Oldest first</option>
+              <option value="catch-rate-desc">Best catch rate</option>
+              <option value="caught-desc">Most fish</option>
+              <option value="hours-desc">Most hours</option>
+            </select>
+          </label>
+        </section>
+
+        <section class="table-card" id="tripListPanel" aria-label="Trip list">
+          <div class="trip-table" id="tripTable"></div>
+          <div class="empty-state hidden" id="emptyState">
+            <h3>No trips match your filters</h3>
+            <p>Add a trip or clear your search to see your logbook here.</p>
+          </div>
+        </section>
+
+        <section class="stats-page hidden" id="advancedStatsPanel" aria-label="Advanced fishing statistics">
+          <div class="stats-toolbar">
+            <label>
+              <span>Stats scope</span>
+              <select id="statsMethodFilter"></select>
+            </label>
+          </div>
+          <div class="metric-grid" id="advancedMetricGrid"></div>
+          <div class="analytics-grid">
+            <article class="analytics-card wide-card">
+              <h3>Outcome Breakdown</h3>
+              <div class="analytics-table" id="outcomeStatsTable"></div>
+            </article>
+            <article class="analytics-card">
+              <h3>Lure Performance</h3>
+              <div class="analytics-table" id="lureStatsTable"></div>
+            </article>
+            <article class="analytics-card">
+              <h3>Flasher Performance</h3>
+              <div class="analytics-table" id="flasherStatsTable"></div>
+            </article>
+            <article class="analytics-card wide-card">
+              <h3>Lure + Flasher Combos</h3>
+              <div class="analytics-table" id="comboStatsTable"></div>
+            </article>
+            <article class="analytics-card">
+              <h3>Species Breakdown</h3>
+              <div class="analytics-table" id="speciesStatsTable"></div>
+            </article>
+            <article class="analytics-card">
+              <h3>Lost Fish</h3>
+              <div class="analytics-table" id="lostFishStatsTable"></div>
+            </article>
+            <article class="analytics-card wide-card">
+              <h3>Trolling Highlights</h3>
+              <div class="analytics-table" id="trollingHighlightsTable"></div>
+            </article>
+            <article class="analytics-card">
+              <h3>Trolling Direction Performance</h3>
+              <div class="analytics-table" id="directionStatsTable"></div>
+            </article>
+            <article class="analytics-card">
+              <h3>Trolling Setup Performance</h3>
+              <div class="analytics-table" id="trollingSetupStatsTable"></div>
+            </article>
+            <article class="analytics-card">
+              <h3>FOW Range Performance</h3>
+              <div class="analytics-table" id="fowRangeStatsTable"></div>
+            </article>
+            <article class="analytics-card">
+              <h3>Trolling Speed Performance</h3>
+              <div class="analytics-table" id="speedStatsTable"></div>
+            </article>
+            <article class="analytics-card">
+              <h3>Exact FOW Caught</h3>
+              <div class="analytics-table" id="fowStatsTable"></div>
+            </article>
+            <article class="analytics-card">
+              <h3>Depth Down</h3>
+              <div class="analytics-table" id="depthDownStatsTable"></div>
+            </article>
+            <article class="analytics-card">
+              <h3>Location Breakdown</h3>
+              <div class="analytics-table" id="locationStatsTable"></div>
+            </article>
+            <article class="analytics-card">
+              <h3>Method Breakdown</h3>
+              <div class="analytics-table" id="methodStatsTable"></div>
+            </article>
+            <article class="analytics-card">
+              <h3>Trip Intent Breakdown</h3>
+              <div class="analytics-table" id="intentStatsTable"></div>
+            </article>
+            <article class="analytics-card">
+              <h3>Person Breakdown</h3>
+              <div class="analytics-table" id="personStatsTable"></div>
+            </article>
+            <article class="analytics-card">
+              <h3>Month Patterns</h3>
+              <div class="analytics-table" id="monthStatsTable"></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="gear-page hidden" id="gearPanel" aria-label="Saved lure and flasher library">
+          <div class="gear-header">
+            <div>
+              <p class="eyebrow">Reusable gear</p>
+              <h3>Saved Lures</h3>
+            </div>
+            <button class="button primary" id="newLibraryLureButton" type="button">New Lure</button>
+          </div>
+          <div class="gear-grid" id="lureLibraryGrid"></div>
+
+          <div class="gear-header">
+            <div>
+              <p class="eyebrow">Reusable attractors</p>
+              <h3>Saved Flashers</h3>
+            </div>
+            <button class="button primary" id="newLibraryFlasherButton" type="button">New Flasher</button>
+          </div>
+          <div class="gear-grid" id="flasherLibraryGrid"></div>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="tripDialog" class="dialog">
+      <form id="tripForm" method="dialog">
+        <div class="dialog-header">
+          <div>
+            <p class="eyebrow">Trip log</p>
+            <h2 id="tripDialogTitle">New Trip</h2>
+          </div>
+          <button class="icon-button" value="cancel" type="button" data-close-dialog aria-label="Close">x</button>
+        </div>
+
+        <input type="hidden" id="tripId" />
+        <div class="form-grid">
+          <label>
+            <span>Trip title</span>
+            <input id="tripTitle" type="text" placeholder="Evening troll" />
+          </label>
+          <label>
+            <span>Date</span>
+            <input id="tripDate" type="date" required />
+          </label>
+          <label>
+            <span>Location / waterbody</span>
+            <input id="tripLocation" type="text" required placeholder="Lake Ontario" list="locationOptions" />
+            <datalist id="locationOptions"></datalist>
+          </label>
+          <label>
+            <span>Start time</span>
+            <input id="startTime" type="time" />
+          </label>
+          <label>
+            <span>End time</span>
+            <input id="endTime" type="time" />
+          </label>
+          <label>
+            <span>Target species</span>
+            <select id="targetSpecies" required></select>
+          </label>
+          <label>
+            <span>Method</span>
+            <select id="method"></select>
+          </label>
+          <fieldset class="intent-control">
+            <legend>Trip intent</legend>
+            <label>
+              <input type="radio" name="tripIntent" value="serious" checked />
+              <span>Serious</span>
+            </label>
+            <label>
+              <input type="radio" name="tripIntent" value="experimental" />
+              <span>Experimental</span>
+            </label>
+          </fieldset>
+          <label>
+            <span>Water temperature</span>
+            <input id="waterTemp" type="text" placeholder="54 F" />
+          </label>
+          <label>
+            <span>Water clarity</span>
+            <input id="waterClarity" type="text" placeholder="Clear, stained, muddy" />
+          </label>
+          <label>
+            <span>Weather</span>
+            <input id="weather" type="text" placeholder="Overcast, light west wind" />
+          </label>
+          <label>
+            <span>Wind</span>
+            <input id="wind" type="text" placeholder="W 12 mph" />
+          </label>
+          <label>
+            <span>Depth / structure</span>
+            <input id="structure" type="text" placeholder="40-60 ft, drop-off" />
+          </label>
+        </div>
+
+        <label class="wide-label">
+          <span>Trip notes</span>
+          <textarea id="tripNotes" rows="4" placeholder="Pattern, timing, launch notes, what you would change next time"></textarea>
+        </label>
+
+        <section class="note-attachments">
+          <div class="section-heading">
+            <h3>Note Photos</h3>
+            <label class="button secondary file-button">
+              Add Photos
+              <input id="notePhotoInput" type="file" accept="image/*" multiple />
+            </label>
+          </div>
+          <div id="notePhotoGrid" class="note-photo-grid"></div>
+        </section>
+
+        <section class="people-editor">
+          <div class="section-heading">
+            <h3>People</h3>
+            <button class="button secondary" id="addPersonButton" type="button">Add Person</button>
+          </div>
+          <div id="personRows" class="person-rows"></div>
+        </section>
+
+        <section class="gear-used-editor">
+          <div class="section-heading">
+            <h3>Setup Timeline</h3>
+            <button class="button secondary" id="addTripGearButton" type="button">Add Setup</button>
+          </div>
+          <div id="tripGearRows" class="gear-used-rows"></div>
+        </section>
+
+        <section class="catch-editor">
+          <div class="section-heading">
+            <h3>Catches</h3>
+            <button class="button secondary" id="addCatchButton" type="button">Add Catch</button>
+          </div>
+          <div id="catchRows" class="catch-rows"></div>
+        </section>
+
+        <section class="catch-editor">
+          <div class="section-heading">
+            <h3>Lost Fish</h3>
+            <button class="button secondary" id="addLostFishButton" type="button">Add Lost Fish</button>
+          </div>
+          <div id="lostFishRows" class="catch-rows"></div>
+        </section>
+
+        <div class="dialog-actions">
+          <button class="button danger" id="deleteTripButton" type="button">Delete</button>
+          <div>
+            <button class="button secondary" type="button" data-close-dialog>Cancel</button>
+            <button class="button primary" id="saveTripButton" type="submit">Save Trip</button>
+          </div>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="lureDialog" class="dialog small-dialog">
+      <form id="lureForm" method="dialog">
+        <div class="dialog-header">
+          <div>
+            <p class="eyebrow">Reusable lure</p>
+            <h2>Add Lure</h2>
+          </div>
+          <button class="icon-button" value="cancel" type="button" data-close-dialog aria-label="Close">x</button>
+        </div>
+        <input type="hidden" id="pendingCatchRow" />
+        <input type="hidden" id="editingLureId" />
+        <div class="form-grid one-column">
+          <label>
+            <span>Lure name</span>
+            <input id="lureName" type="text" required placeholder="Blue/Silver Little Cleo" />
+          </label>
+          <label>
+            <span>Type</span>
+            <select id="lureType"></select>
+          </label>
+          <label>
+            <span>Brand / model</span>
+            <input id="lureBrand" type="text" placeholder="Acme" />
+          </label>
+          <label>
+            <span>Color</span>
+            <input id="lureColor" type="text" placeholder="Blue/Silver" />
+          </label>
+          <label>
+            <span>Lure image</span>
+            <input id="lureImage" type="file" accept="image/*" />
+          </label>
+          <label>
+            <span>Notes</span>
+            <textarea id="lureNotes" rows="3" placeholder="When and where this lure shines"></textarea>
+          </label>
+        </div>
+        <div class="dialog-actions end-only">
+          <button class="button danger hidden" id="deleteLureButton" type="button">Delete</button>
+          <button class="button secondary" type="button" data-close-dialog>Cancel</button>
+          <button class="button primary" type="submit">Save Lure</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="flasherDialog" class="dialog small-dialog">
+      <form id="flasherForm" method="dialog">
+        <div class="dialog-header">
+          <div>
+            <p class="eyebrow">Optional attractor</p>
+            <h2>Add Flasher</h2>
+          </div>
+          <button class="icon-button" value="cancel" type="button" data-close-dialog aria-label="Close">x</button>
+        </div>
+        <input type="hidden" id="pendingFlasherCatchRow" />
+        <input type="hidden" id="editingFlasherId" />
+        <div class="form-grid one-column">
+          <label>
+            <span>Flasher name</span>
+            <input id="flasherName" type="text" required placeholder="Green Chrome Paddle" />
+          </label>
+          <label>
+            <span>Type</span>
+            <select id="flasherType"></select>
+          </label>
+          <label>
+            <span>Brand / model</span>
+            <input id="flasherBrand" type="text" placeholder="Dreamweaver" />
+          </label>
+          <label>
+            <span>Color</span>
+            <input id="flasherColor" type="text" placeholder="Green Chrome" />
+          </label>
+          <label>
+            <span>Flasher image</span>
+            <input id="flasherImage" type="file" accept="image/*" />
+          </label>
+          <label>
+            <span>Notes</span>
+            <textarea id="flasherNotes" rows="3" placeholder="Leader length, speed, water color, species"></textarea>
+          </label>
+        </div>
+        <div class="dialog-actions end-only">
+          <button class="button danger hidden" id="deleteFlasherButton" type="button">Delete</button>
+          <button class="button secondary" type="button" data-close-dialog>Cancel</button>
+          <button class="button primary" type="submit">Save Flasher</button>
+        </div>
+      </form>
+    </dialog>
+
+    <template id="catchRowTemplate">
+      <article class="catch-row">
+        <div class="collapsible-row-header">
+          <button class="row-collapse-button" type="button" data-toggle-row aria-expanded="true">
+            <span class="row-collapse-icon">v</span>
+            <span class="collapsible-row-summary">Catch</span>
+          </button>
+          <button class="icon-button remove-catch" type="button" aria-label="Remove catch">x</button>
+        </div>
+        <div class="collapsible-row-body">
+          <div class="row-section-title">Catch Details</div>
+          <label>
+            <span>Person</span>
+            <select class="catch-person"></select>
+          </label>
+          <label>
+            <span>Species</span>
+            <select class="catch-species"></select>
+          </label>
+          <label>
+            <span>Length</span>
+            <input class="catch-length" type="text" placeholder="28 in" />
+          </label>
+          <label>
+            <span>Weight</span>
+            <input class="catch-weight" type="text" placeholder="9 lb" />
+          </label>
+          <label>
+            <span>Time</span>
+            <input class="catch-time" type="time" />
+          </label>
+          <label class="checkbox-label catch-released-field">
+            <input class="catch-released" type="checkbox" />
+            <span>Released after landing</span>
+          </label>
+          <label>
+            <span>Water depth</span>
+            <input class="catch-water-depth" type="text" placeholder="80 ft" />
+          </label>
+          <label>
+            <span>Estimated depth down</span>
+            <input class="catch-depth-down" type="text" placeholder="45 ft" />
+          </label>
+          <div class="row-section-title">Gear</div>
+          <label>
+            <span>Lure</span>
+            <select class="catch-lure"></select>
+          </label>
+          <button class="button secondary add-lure-inline" type="button">New Lure</button>
+          <div class="lure-preview"></div>
+          <label class="trolling-field">
+            <span>Flasher</span>
+            <select class="catch-flasher"></select>
+          </label>
+          <button class="button secondary add-flasher-inline trolling-field" type="button">New Flasher</button>
+          <div class="flasher-preview trolling-field"></div>
+          <div class="row-section-title trolling-field">Trolling Details</div>
+          <label class="trolling-field">
+            <span>Trolling setup</span>
+            <select class="catch-presentation">
+              <option value="">Select setup</option>
+              <option value="downrigger">Downrigger</option>
+              <option value="cheater">Cheater</option>
+              <option value="flatline-leadcore">Planer Board / Leadcore</option>
+              <option value="dipsey-diver">Dipsey Diver</option>
+            </select>
+          </label>
+          <label class="trolling-field">
+            <span>Trolling direction</span>
+            <select class="catch-direction">
+              <option value="">Select direction</option>
+              <option value="N">N</option>
+              <option value="NE">NE</option>
+              <option value="E">E</option>
+              <option value="SE">SE</option>
+              <option value="S">S</option>
+              <option value="SW">SW</option>
+              <option value="W">W</option>
+              <option value="NW">NW</option>
+            </select>
+          </label>
+          <label class="trolling-field">
+            <span>FOW caught</span>
+            <input class="catch-fow" type="text" placeholder="80 FOW" />
+          </label>
+          <label class="trolling-field">
+            <span>Speed</span>
+            <input class="catch-speed" type="text" placeholder="2.4 mph" />
+          </label>
+          <label class="trolling-param param-ball-depth">
+            <span>Ball depth</span>
+            <input class="catch-ball-depth" type="text" placeholder="55 ft" />
+          </label>
+          <label class="trolling-param param-board-line">
+            <span>Line behind board</span>
+            <input class="catch-line-behind-board" type="text" placeholder="150 ft" />
+          </label>
+          <label class="trolling-param param-lure-depth">
+            <span>Estimated lure depth</span>
+            <input class="catch-estimated-lure-depth" type="text" placeholder="35 ft" />
+          </label>
+          <label class="trolling-param param-dipsey-setting">
+            <span>Dipsey plate setting</span>
+            <input class="catch-dipsey-setting" type="text" placeholder="2.5" />
+          </label>
+          <label class="trolling-param param-line-out">
+            <span>Line out</span>
+            <input class="catch-line-out" type="text" placeholder="180 ft" />
+          </label>
+          <label class="trolling-param param-estimated-depth">
+            <span>Estimated depth</span>
+            <input class="catch-estimated-depth" type="text" placeholder="60 ft" />
+          </label>
+          <div class="row-section-title">Notes</div>
+          <label class="catch-notes-label">
+            <span>Catch notes</span>
+            <textarea class="catch-notes" rows="2" placeholder="Retrieve, strike, release notes"></textarea>
+          </label>
+        </div>
+      </article>
+    </template>
+
+    <template id="tripGearRowTemplate">
+      <article class="gear-used-row">
+        <div class="collapsible-row-header">
+          <button class="row-collapse-button" type="button" data-toggle-row aria-expanded="true">
+            <span class="row-collapse-icon">v</span>
+            <span class="collapsible-row-summary">Setup Change</span>
+          </button>
+          <button class="icon-button remove-trip-gear" type="button" aria-label="Remove gear">x</button>
+        </div>
+        <div class="collapsible-row-body">
+          <div class="row-section-title">Timing</div>
+          <label class="gear-person-field">
+            <span>Person</span>
+            <select class="trip-gear-person"></select>
+          </label>
+          <label class="gear-start-field">
+            <span>Start time</span>
+            <input class="trip-gear-start-time" type="time" />
+          </label>
+          <label class="gear-end-field">
+            <span>Stop time</span>
+            <input class="trip-gear-end-time" type="time" />
+          </label>
+          <label class="gear-change-field">
+            <span>Change note</span>
+            <input class="trip-gear-change-note" type="text" placeholder="Started spoon/flasher, changed depth, switched lure" />
+          </label>
+          <div class="row-section-title gear-title">Gear</div>
+          <label class="gear-lure-field">
+            <span>Lure</span>
+            <select class="trip-gear-lure"></select>
+          </label>
+          <button class="button secondary add-lure-inline gear-lure-action" type="button">New Lure</button>
+          <div class="lure-preview"></div>
+          <label class="trolling-field gear-flasher-field">
+            <span>Flasher</span>
+            <select class="trip-gear-flasher"></select>
+          </label>
+          <button class="button secondary add-flasher-inline trolling-field gear-flasher-action" type="button">New Flasher</button>
+          <div class="flasher-preview trolling-field"></div>
+          <div class="row-section-title trolling-field gear-trolling-title">Trolling Details</div>
+          <label class="trolling-field">
+            <span>Trolling setup</span>
+            <select class="catch-presentation">
+              <option value="">Select setup</option>
+              <option value="downrigger">Downrigger</option>
+              <option value="cheater">Cheater</option>
+              <option value="flatline-leadcore">Planer Board / Leadcore</option>
+              <option value="dipsey-diver">Dipsey Diver</option>
+            </select>
+          </label>
+          <label class="trolling-field">
+            <span>Trolling direction</span>
+            <select class="catch-direction">
+              <option value="">Select direction</option>
+              <option value="N">N</option>
+              <option value="NE">NE</option>
+              <option value="E">E</option>
+              <option value="SE">SE</option>
+              <option value="S">S</option>
+              <option value="SW">SW</option>
+              <option value="W">W</option>
+              <option value="NW">NW</option>
+            </select>
+          </label>
+          <label class="trolling-field">
+            <span>Speed</span>
+            <input class="catch-speed" type="text" placeholder="2.4 mph" />
+          </label>
+          <label class="trolling-param param-ball-depth">
+            <span>Ball depth</span>
+            <input class="catch-ball-depth" type="text" placeholder="55 ft" />
+          </label>
+          <label class="trolling-param param-board-line">
+            <span>Line behind board</span>
+            <input class="catch-line-behind-board" type="text" placeholder="150 ft" />
+          </label>
+          <label class="trolling-param param-lure-depth">
+            <span>Estimated lure depth</span>
+            <input class="catch-estimated-lure-depth" type="text" placeholder="35 ft" />
+          </label>
+          <label class="trolling-param param-dipsey-setting">
+            <span>Dipsey plate setting</span>
+            <input class="catch-dipsey-setting" type="text" placeholder="2.5" />
+          </label>
+          <label class="trolling-param param-line-out">
+            <span>Line out</span>
+            <input class="catch-line-out" type="text" placeholder="180 ft" />
+          </label>
+          <label class="trolling-param param-estimated-depth">
+            <span>Estimated depth</span>
+            <input class="catch-estimated-depth" type="text" placeholder="60 ft" />
+          </label>
+        </div>
+      </article>
+    </template>
+
+    <template id="personRowTemplate">
+      <article class="person-row">
+        <input class="person-name" type="text" placeholder="Name" />
+        <button class="button danger remove-person" type="button">Remove</button>
+      </article>
+    </template>
+
+    <script src="app.js"></script>
+  </body>
+</html>

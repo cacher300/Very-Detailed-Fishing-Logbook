@@ -1,0 +1,85 @@
+# Fishing Logbook
+
+A private, one-person, self-hosted fishing logbook. It is a small Python app with a browser interface and a local JSON data file, built for detailed trip notes, gear tracking, and fishing stats.
+
+## Features
+
+- Dashboard with trip table, quick stats, search, target filter, year filter, and sorting.
+- Add, edit, and delete trips.
+- Track trip title, date, location, start time, end time, target species, method, intent, weather, water conditions, structure, notes, and note photos.
+- Remember previously fished waterbodies for quick future location selection.
+- Mark trips as Serious or Experimental.
+- Current methods: Trolling, Casting, Jigging, Fly Fishing, Bait Fishing, and Ice Fishing.
+- Save people once and assign catches or setup timeline entries to them on any trip method.
+- Attach trip note photos such as fishfinder shots, water condition photos, ramp photos, or rig photos.
+- Save reusable lures with name, type, brand/model, color, notes, and image.
+- Save reusable flashers with name, type, brand/model, color, notes, and image.
+- Edit or delete saved lures and flashers from the Gear page.
+- Log each landed fish individually with species, whether it was released after landing, length, weight, time, water depth, estimated depth down, FOW caught, lure, notes, and trolling-specific details when relevant.
+- Log lost fish separately with the same trip context without adding them to caught totals or catch rate.
+- Log a setup timeline for lures that did not catch fish, lure/flasher combos, setup changes, depth changes, and time windows.
+- Show flasher and trolling setup fields only for Trolling trips.
+- Track trolling setups for downrigger, cheater, flatline/leadcore, dipsey diver, trolling direction, and speed.
+- Advanced Stats page with an overall view or per-method filter, covering outcomes, catch/release ratio, percent lost, lures, flashers, lure/flasher combos, lost fish, species, locations, trolling direction, trolling setup efficiency, 10-foot FOW ranges, trolling speed performance, depth down, methods, trip intent, people, and month patterns.
+- JSON import/export is available from the Data menu for backups.
+
+## Run Locally
+
+From this folder:
+
+```powershell
+python server.py
+```
+
+Then open:
+
+```text
+http://127.0.0.1:8080
+```
+
+Your data is saved here:
+
+```text
+data/logbook.json
+```
+
+`data/logbook.json` is intentionally ignored by git so your private fishing data, saved people, locations, notes, and photos do not get pushed to GitHub. A clean starter file is included at:
+
+```text
+data/logbook.example.json
+```
+
+If you ever clone the repo onto a new machine, run the app once and it will create `data/logbook.json` automatically.
+
+## Backups
+
+Use the Data menu in the app to export a JSON backup. The backup contains trips, lures, flashers, setup timeline entries, catches, and note photos.
+
+For a manual backup, copy:
+
+```text
+data/logbook.json
+```
+
+## Self-hosting Notes
+
+The current server binds to `127.0.0.1`, which is best for running on the same machine. To access it from another device on your network, change `HOST` in `server.py` to `0.0.0.0` and run it behind your normal local-network or reverse-proxy setup.
+
+This version has no login system because it is designed for one person. If you expose it beyond your own machine or home network, put it behind a password-protected reverse proxy first.
+
+## Project Files
+
+- `server.py` serves the app and saves JSON data.
+- `index.html` contains the app markup and form templates.
+- `styles.css` contains the layout and visual styling.
+- `app.js` contains the browser-side app logic.
+- `data/logbook.json` stores your fishing data.
+
+## Good Future Upgrades
+
+- SQLite storage with automatic dated backups.
+- Password gate for remote access.
+- Map pins for launches, catches, and productive areas.
+- Catch-specific photo attachments.
+- CSV export for spreadsheet analysis.
+- Charts for seasonal patterns, water temperature, and gear performance.

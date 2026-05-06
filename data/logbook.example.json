@@ -1,0 +1,53 @@
+{
+  "species": [
+    "Lake Trout",
+    "Largemouth Bass",
+    "Smallmouth Bass",
+    "Chinook Salmon",
+    "Coho Salmon",
+    "Rainbow Trout",
+    "Brown Trout",
+    "Walleye",
+    "Northern Pike",
+    "Muskie",
+    "Rock Bass",
+    "Perch",
+    "Crappie",
+    "Bluegill"
+  ],
+  "methods": [
+    "Trolling",
+    "Casting",
+    "Jigging",
+    "Fly Fishing",
+    "Bait Fishing",
+    "Ice Fishing"
+  ],
+  "lureTypes": [
+    "Spoon",
+    "Crankbait",
+    "Spinner",
+    "Jig",
+    "Soft Plastic",
+    "Fly",
+    "Plug",
+    "Swimbait",
+    "Flasher/Fly",
+    "Jerkbait",
+    "Topwater",
+    "Other"
+  ],
+  "flasherTypes": [
+    "Paddle",
+    "Dodger",
+    "Spin Doctor",
+    "Meat Rig",
+    "Attractor",
+    "Other"
+  ],
+  "lures": [],
+  "flashers": [],
+  "people": [],
+  "locations": [],
+  "trips": []
+}

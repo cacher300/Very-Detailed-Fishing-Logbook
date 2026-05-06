@@ -1,0 +1,18 @@
+# Local fishing logbook data. This can contain names, locations, notes, and photos.
+data/logbook.json
+
+# Python runtime/cache files.
+__pycache__/
+*.py[cod]
+
+# Local editor and OS noise.
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Future local database/backups.
+*.db
+*.sqlite
+*.sqlite3
+*.bak
