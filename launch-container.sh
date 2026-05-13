@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 set -eu
 
-APP_URL="${APP_URL:-http://127.0.0.1:8080}"
+APP_URL="${APP_URL:-http://127.0.0.1}"
 CONTAINER_NAME="${CONTAINER_NAME:-detailed-fishing-logbook}"
 
 cd "$(dirname "$0")"

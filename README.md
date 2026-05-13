@@ -51,7 +51,7 @@ The script stops any currently running Fishing Logbook container, rebuilds the i
 Then open:
 
 ```text
-http://127.0.0.1:8080
+http://127.0.0.1
 ```
 
 Docker Compose mounts your local data folder into the container:
