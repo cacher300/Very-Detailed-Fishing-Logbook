@@ -6,6 +6,7 @@ __pycache__/
 
 # Keep private/local logbook data out of images.
 data/logbook.json
+backups/
 
 # Local/editor noise.
 .DS_Store

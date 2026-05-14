@@ -9,7 +9,7 @@ A private, one-person, self-hosted fishing logbook. It is a small Flask app with
 - Track trip title, date, location, start time, end time, target species, method, intent, weather, water conditions, structure, notes, and note photos.
 - Remember previously fished waterbodies for quick future location selection.
 - Mark trips as Serious or Experimental.
-- Current methods: Trolling, Casting, Jigging, Fly Fishing, Bait Fishing, and Ice Fishing.
+- Current methods: Trolling, Casting, Jigging, Fly Fishing, Bait Fishing, Ice Fishing, and Shore Fishing.
 - Save people once and assign catches or setup timeline entries to them on any trip method.
 - Attach trip note photos such as fishfinder shots, water condition photos, ramp photos, or rig photos.
 - Save reusable lures with name, type, brand/model, color, notes, and image.
@@ -96,6 +96,36 @@ For a manual backup, copy:
 
 ```text
 data/logbook.json
+```
+
+## Nightly NAS Backups
+
+The app includes a host-side backup script for the local JSON database. It creates a timestamped backup from `data/logbook.json`, keeps local copies in `backups/`, and can copy each backup to your NAS.
+
+If your NAS supports SSH/SCP or rsync, install the 3:00 AM nightly cron job like this:
+
+```sh
+./scripts/install-nightly-backup.sh user@192.168.3.30:/path/to/fishing-logbook-backups
+```
+
+Replace `user` and `/path/to/fishing-logbook-backups` with the SSH user and folder on your NAS. SSH key login is recommended so cron can run without prompting for a password.
+
+If you mount the NAS share on the laptop instead, pass the mounted folder:
+
+```sh
+./scripts/install-nightly-backup.sh /mnt/nas/fishing-logbook-backups
+```
+
+Run a backup immediately to test it:
+
+```sh
+NAS_BACKUP_TARGET='user@192.168.3.30:/path/to/fishing-logbook-backups' ./scripts/backup-logbook.sh
+```
+
+Backup logs are written to:
+
+```text
+backups/backup.log
 ```
 
 ## Self-hosting Notes

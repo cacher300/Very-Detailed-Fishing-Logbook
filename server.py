@@ -39,6 +39,7 @@ DEFAULT_LOGBOOK = {
         "Fly Fishing",
         "Bait Fishing",
         "Ice Fishing",
+        "Shore Fishing",
     ],
     "lureTypes": [
         "Spoon",

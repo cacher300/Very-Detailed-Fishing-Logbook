@@ -368,10 +368,17 @@ textarea {
   background: #fff;
   color: var(--text);
   padding: 10px 11px;
+  line-height: 1.2;
   outline: none;
 }
 
+input,
+select {
+  height: 42px;
+}
+
 textarea {
+  min-height: 88px;
   resize: vertical;
 }
 

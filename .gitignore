@@ -12,6 +12,7 @@ __pycache__/
 Thumbs.db
 
 # Future local database/backups.
+backups/
 *.db
 *.sqlite
 *.sqlite3

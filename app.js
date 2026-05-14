@@ -30,7 +30,7 @@ const defaults = {
     "Crappie",
     "Bluegill"
   ],
-  methods: ["Trolling", "Casting", "Jigging", "Fly Fishing", "Bait Fishing", "Ice Fishing"],
+  methods: ["Trolling", "Casting", "Jigging", "Fly Fishing", "Bait Fishing", "Ice Fishing", "Shore Fishing"],
   lureTypes: ["Spoon", "Crankbait", "Spinner", "Jig", "Soft Plastic", "Fly", "Plug", "Swimbait", "Flasher/Fly", "Jerkbait", "Topwater", "Other"],
   flasherTypes: ["Paddle", "Dodger", "Spin Doctor", "Meat Rig", "Attractor", "Other"],
   lures: [
@@ -517,15 +517,15 @@ function setTripIntent(value) {
 }
 
 function tripRatingValue(trip) {
-  if (trip?.tripRating === null || trip?.tripRating === undefined || trip?.tripRating === "") return null;
+  if (trip?.tripRating === null || trip?.tripRating === undefined || trip?.tripRating === "") return 1;
   const value = Number(trip.tripRating);
-  if (!Number.isFinite(value)) return null;
-  if (value <= 0) return null;
+  if (!Number.isFinite(value)) return 1;
+  if (value <= 1) return 1;
   return Math.min(3, Math.max(1, Math.round(value)));
 }
 
 function setTripRating(value) {
-  els.tripRating.value = String(tripRatingValue({ tripRating: value }) || 0);
+  els.tripRating.value = String(tripRatingValue({ tripRating: value }));
   updateTripRatingLabel();
 }
 
@@ -535,7 +535,6 @@ function updateTripRatingLabel() {
 
 function tripRatingLabel(value) {
   const rating = tripRatingValue({ tripRating: value });
-  if (rating === null) return "Not rated";
   return ["Bad", "Good", "Outstanding"][rating - 1];
 }
 
@@ -1380,10 +1379,7 @@ function renderAdvancedStats() {
   renderStatsTable(els.methodStatsTable, ["Method", "Trips", "Fish", "Hours", "Fish / hr"], summarizeTrips(state.trips.map((trip) => ({ ...trip, fish: totalCaught(trip), rate: catchRate(trip) })), (trip) => trip.method));
 
   renderStatsTable(els.intentStatsTable, ["Intent", "Trips", "Fish", "Hours", "Fish / hr"], summarizeTrips(locationRows, (trip) => intentLabel(tripIntent(trip))));
-  renderStatsTable(els.ratingStatsTable, ["Rating", "Trips", "Fish", "Hours", "Fish / hr"], summarizeTrips(locationRows, (trip) => {
-    const rating = tripRatingValue(trip);
-    return rating === null ? "" : tripRatingLabel(rating);
-  }));
+  renderStatsTable(els.ratingStatsTable, ["Rating", "Trips", "Fish", "Hours", "Fish / hr"], summarizeTrips(locationRows, (trip) => tripRatingLabel(tripRatingValue(trip))));
 
   renderStatsTable(els.personStatsTable, ["Person", "Fish", "Setups", "Gear Time", "Trips"], summarizePeople(records, gearRecords));
 
